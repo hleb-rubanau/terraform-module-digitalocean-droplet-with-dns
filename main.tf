@@ -2,13 +2,17 @@ locals {
   droplet_fqdn = join(".", [var.dns_record, var.dns_zone])
 }
 
+locals {
+  droplet_name = var.droplet_name != "" ? var.name : local.droplet_fqdn
+}
+
 module "do_ssh_keys" {
   source = "github.com/hleb-rubanau/terraform-module-digitalocean-ssh-key-ids"
   keys   = var.ssh_key_names
 }
 
 resource "digitalocean_droplet" "server" {
-  name = local.droplet_fqdn
+  name = local.droplet_name
 
   image  = var.image
   region = var.region
